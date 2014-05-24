@@ -62,11 +62,16 @@ namespace HEX
 
 	public:
 		template <typename Type>
-						Type			Read(size_t size = 1, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
+		HEXREADER_API	Type			Read(size_t size = 1, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
+		
 		template <>
-						std::string		Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
+		HEXREADER_API	bool			Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
+
 		template <>
-						std::wstring	Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
+		HEXREADER_API	std::string		Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
+
+		template <>
+		HEXREADER_API	std::wstring	Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
 
 		HEXREADER_API	void*			ReadByteArray(size_t size, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
 
@@ -87,57 +92,6 @@ namespace HEX
 	private:
 		std::ifstream	m_File;
 	};
-
-	template <typename Type>
-	Type HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
-	{	
-		void* buffer = NULL;
-		
-		buffer = ReadByteArray(sizeof(Type) * size, offset, bRelativeToCurrentPos);
-		
-		assert(buffer != NULL);
-	
-		Type ret = *reinterpret_cast<Type*>(buffer);
-			
-		delete[] buffer;
-		buffer = NULL;
-	
-		return ret;
-	}
-
-	template <>
-	std::string HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
-	{
-		void* buffer = NULL;
-
-		buffer = ReadByteArray(sizeof(char) * size, offset, bRelativeToCurrentPos);
-
-		assert(buffer != NULL);
-
-		std::string ret(reinterpret_cast<char*>(buffer), size);
-
-		delete[] buffer;
-		buffer = NULL;
-
-		return ret;
-	}
-
-	template <>
-	std::wstring HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
-	{
-		void* buffer = NULL;
-
-		buffer = ReadByteArray(sizeof(wchar_t) * size, offset, bRelativeToCurrentPos);
-
-		assert(buffer != NULL);
-
-		std::wstring ret(reinterpret_cast<wchar_t*>(buffer), size);
-
-		delete[] buffer;
-		buffer = NULL;
-
-		return ret;
-	}
 }
 
 #endif // HEXReader_H__

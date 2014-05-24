@@ -99,56 +99,21 @@ HEXREADER_API void HEX::HEXReader::Goto(const std::streamoff offset, bool bRelat
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HEXREADER_API void* HEX::HEXReader::ReadByteArray(size_t size, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
 {
-	//uint8_t* buffer = new uint8_t[size];
 	char* buffer = NULL;
 	buffer = new char[size]();
 	std::streampos current;
-	//SIZE_T bytesRead = 0;
-
-	//BOOL res = ::ReadProcessMemory(m_ProcessHandle, address, buffer, size, &bytesRead);
-	//BOOL res = ::ReadProcessMemory(m_ProcessHandle, bRelativeToCurrentPos ? (uint32_t*)(GetModuleBaseAddress() + (uint32_t)address) : (uint32_t)address, buffer, size, &bytesRead);
-
-	//BOOL res;
 
 	if (bRelativeToCurrentPos)
 	{
-		//res = ::ReadProcessMemory(m_ProcessHandle, (uint32_t*)(GetModuleBaseAddress() + (uint32_t)address), buffer, size, &bytesRead);
 		m_File.seekg(offset, std::ios::cur);	// sets filepointer position +/- offset from current position. moves not if 0. in either case filepointer size will be moved by size. look below
-		//m_File.read(buffer, size);	// reads size amount at current filepointer position and also moves filepointer size amount forward.
 	}
 	else	// equals relative to beginning of file
-	{
-		//res = ::ReadProcessMemory(m_ProcessHandle, (uint32_t*)((uint32_t)address), buffer, size, &bytesRead);
-		//current = m_File.tellg();	// temporary save current filepointer position so we can reset it later
+	{		
 		m_File.seekg(offset, std::ios::beg);
-		//m_File.read(buffer, size);
 	}
 
 	m_File.read(buffer, size);	// reads size amount at current filepointer position and also moves filepointer size amount forward.
-
-	//if (!res)
-	//{
-	//	// Deal with the error
-	//	//fprintf(stderr, "ReadUInt: error reading from process\n");
-	//	//LogLastErrorFormatMessage(L"ReadUInt: error reading from process - ");
-	//	//delete [] buffer;
-	//	//return reinterpret_cast<void *>(0xCDCDCDCD);
-	//	delete[] buffer;
-	//	return NULL;
-	//}
-
-	//if (bytesRead != size)
-	//{
-	//	// Deal with error where we didn't get enough memory
-	//	//fprintf(stderr, "ReadUInt: error reading from process. not enough memory\n");
-	//	//DebugOutputSystemError(L"ReadByteArray");
-	//	DebugOutputSystemError(__WFUNCSIG__);
-	//	//delete [] buffer;
-	//	//return reinterpret_cast<void *>(0xCDCDCDCD);
-	//	delete[] buffer;
-	//	return NULL;
-	//}
-
+	
 	return reinterpret_cast<void *>(buffer);
 }
 
@@ -403,29 +368,83 @@ HEXREADER_API float32_t HEX::HEXReader::ReadFloat(const std::streamoff offset /*
 	return ret;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Reads double value at specified position
-///
-/// 
-///
-/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
-/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
-/// @return A double value at the specified position or DBL_MAX if something went wrong
-/// @sa ReadByteArray()
-/// @attention Allocated buffer gets also freed here
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HEXREADER_API double64_t HEX::HEXReader::ReadDouble(const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
+
+
+template <typename Type>
+HEXREADER_API Type HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
 {
 	void* buffer = NULL;
-	buffer = ReadByteArray(sizeof(double64_t), offset, bRelativeToCurrentPos);
-	if (buffer == NULL)
-	{
-		delete[] buffer;
-		//return 2323.2323f;
-		return DBL_MAX;
-	}
-	double64_t ret = *reinterpret_cast<double64_t*>(buffer);
-	delete[] buffer;	// memory allocated inside ReadByteArray
+
+	buffer = ReadByteArray(sizeof(Type) * size, offset, bRelativeToCurrentPos);
+
+	assert(buffer != NULL);
+
+	Type ret = *reinterpret_cast<Type*>(buffer);
+
+	delete[] buffer;
+	buffer = NULL;
+
+	return ret;
+}
+template HEXREADER_API uint8_t		HEX::HEXReader::Read<uint8_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API uint16_t		HEX::HEXReader::Read<uint16_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API uint32_t		HEX::HEXReader::Read<uint32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API uint64_t		HEX::HEXReader::Read<uint64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API int8_t		HEX::HEXReader::Read<int8_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API int16_t		HEX::HEXReader::Read<int16_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API int32_t		HEX::HEXReader::Read<int32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API int64_t		HEX::HEXReader::Read<int64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API float32_t	HEX::HEXReader::Read<float32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+template HEXREADER_API double64_t	HEX::HEXReader::Read<double64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+
+template <>
+HEXREADER_API bool HEX::HEXReader::Read(size_t size /* = 1 */, const std::streamoff offset /* = 0x0 */, bool bRelativeToCurrentPos /* = true */)
+{
+	void* buffer = NULL;
+
+	buffer = ReadByteArray(sizeof(uint8_t) * size, offset, bRelativeToCurrentPos);
+
+	assert(buffer != NULL);
+
+	uint8_t ret = *reinterpret_cast<uint8_t*>(buffer);
+
+	delete[] buffer;
+	buffer = NULL;
+
+	return (ret != 0);
+}
+
+template <>
+HEXREADER_API std::string HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
+{
+	void* buffer = NULL;
+
+	buffer = ReadByteArray(sizeof(char) * size, offset, bRelativeToCurrentPos);
+
+	assert(buffer != NULL);
+
+	std::string ret(reinterpret_cast<char*>(buffer), size);
+
+	delete[] buffer;
+	buffer = NULL;
+
+	return ret;
+}
+
+template <>
+HEXREADER_API std::wstring HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
+{
+	void* buffer = NULL;
+
+	buffer = ReadByteArray(sizeof(wchar_t) * size, offset, bRelativeToCurrentPos);
+
+	assert(buffer != NULL);
+
+	std::wstring ret(reinterpret_cast<wchar_t*>(buffer), size);
+
+	delete[] buffer;
+	buffer = NULL;
 
 	return ret;
 }
