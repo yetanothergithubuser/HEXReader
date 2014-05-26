@@ -16,8 +16,8 @@ build/
 [Oo]bj/
 docs/
 lib/*
-*_debug_*
-*_release_*
+*/*_debug_*
+*/*_release_*
 
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
