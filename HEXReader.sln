@@ -43,6 +43,7 @@ Global
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.exe_release_static|Win32.ActiveCfg = exe_release_static|Win32
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.exe_release_static|Win32.Build.0 = exe_release_static|Win32
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.lib_debug_shared|Win32.ActiveCfg = exe_debug_shared|Win32
+		{5B75DD95-B773-40E0-99E6-389F725BAD42}.lib_debug_shared|Win32.Build.0 = exe_debug_shared|Win32
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.lib_debug_static|Win32.ActiveCfg = exe_debug_static|Win32
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.lib_release_shared|Win32.ActiveCfg = exe_release_shared|Win32
 		{5B75DD95-B773-40E0-99E6-389F725BAD42}.lib_release_static|Win32.ActiveCfg = exe_release_static|Win32

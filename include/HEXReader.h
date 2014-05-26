@@ -1,6 +1,9 @@
 #ifndef HEXReader_H__
 #define HEXReader_H__
 
+
+#pragma once
+
 #ifdef HEXSTATICLIB
 	#define HEXDLLEXPORT
 #else
@@ -11,8 +14,6 @@
 	#endif
 #endif
 
-
-#pragma once
 
 #include <Windows.h>
 #include <TlHelp32.h>
@@ -34,16 +35,6 @@ typedef double double64_t;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 namespace HEX
 {
-	enum DATATYPES
-	{
-		BYTE = 1,
-		WORD = 2,
-		DWORD = 4,
-		QWORD = 8,
-		FLOAT = 4,
-		DOUBLE = 8
-	};
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @class HEXReader
 	///
@@ -57,24 +48,13 @@ namespace HEX
 		HEXDLLEXPORT	HEXReader();
 		HEXDLLEXPORT	~HEXReader();
 
-	public:
 		HEXDLLEXPORT	bool			Open(std::wstring strFileName);
 		HEXDLLEXPORT	bool			IsValid(void);
 		HEXDLLEXPORT	std::streampos	GetFileSize(void);
 		HEXDLLEXPORT	void			Goto(const std::streamoff offset, bool bRelativeToCurrentPos = true);
 
-	public:
-		template <typename Type>
-		HEXDLLEXPORT	Type			Read(size_t size = 1, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
-
-		template <>
-		HEXDLLEXPORT	bool			Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
-
-		template <>
-		HEXDLLEXPORT	std::string		Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
-
-		template <>
-		HEXDLLEXPORT	std::wstring	Read(size_t size, const std::streamoff offset, bool bRelativeToCurrentPos);
+		template <typename T>
+		HEXDLLEXPORT	T				Read(size_t size = 1, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
 
 		HEXDLLEXPORT	void*			ReadByteArray(size_t size, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
 

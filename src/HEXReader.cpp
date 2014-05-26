@@ -1,5 +1,7 @@
 #include "HEXReader.h"
 
+#include "vld.h"
+
 
 HEXDLLEXPORT HEX::HEXReader::HEXReader()
 {
@@ -91,7 +93,7 @@ HEXDLLEXPORT void HEX::HEXReader::Goto(const std::streamoff offset, bool bRelati
 ///
 ///
 ///
-/// @param size Amount of bytes to be read
+/// @param size Amount of bytes to read
 /// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
 /// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
 /// @return A void pointer to the allocated byte array
@@ -117,43 +119,185 @@ HEXDLLEXPORT void* HEX::HEXReader::ReadByteArray(size_t size, const std::streamo
 	return reinterpret_cast<void *>(buffer);
 }
 
-template <typename Type>
-HEXDLLEXPORT Type HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template function - Reads sizeof(T) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(T)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A value of template type T
+/// @sa ReadByteArray()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <typename T>
+HEXDLLEXPORT T HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
 {
 	void* buffer = NULL;
 
-	buffer = ReadByteArray(sizeof(Type) * size, offset, bRelativeToCurrentPos);
+	buffer = ReadByteArray(sizeof(T) * size, offset, bRelativeToCurrentPos);
 
 	assert(buffer != NULL);
 
-	Type ret = *reinterpret_cast<Type*>(buffer);
+	T ret = *reinterpret_cast<T*>(buffer);
 
 	delete[] buffer;
 	buffer = NULL;
 
 	return ret;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(uint8_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(uint8_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A uint8_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT uint8_t		HEX::HEXReader::Read<uint8_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(uint16_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(uint16_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A uint16_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT uint16_t		HEX::HEXReader::Read<uint16_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(uint32_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(uint32_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A uint32_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT uint32_t		HEX::HEXReader::Read<uint32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(uint64_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(uint64_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A uint64_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT uint64_t		HEX::HEXReader::Read<uint64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(int8_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(int8_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A int8_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT int8_t		HEX::HEXReader::Read<int8_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(int16_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(int16_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A int16_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT int16_t		HEX::HEXReader::Read<int16_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(int32_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(int32_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A int32_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT int32_t		HEX::HEXReader::Read<int32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(int64_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(int64_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A int64_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT int64_t		HEX::HEXReader::Read<int64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
-template HEXDLLEXPORT float32_t	HEX::HEXReader::Read<float32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(float32_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(float32_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A float32_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template HEXDLLEXPORT float32_t		HEX::HEXReader::Read<float32_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads sizeof(double64_t) amount of bytes at specified position
+///
+/// 
+///
+/// @param size Amount of bytes to read. default is 1, which leads to sizeof(double64_t)
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A double64_t value
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template HEXDLLEXPORT double64_t	HEX::HEXReader::Read<double64_t>(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads a byte at specified position and returns evaluates as bool
+///
+/// 
+///
+/// @param size default 1 should used (sizeof(int8_t))
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A bool value (true -> int8_t != 0)
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template <>
-HEXDLLEXPORT bool HEX::HEXReader::Read(size_t size /* = 1 */, const std::streamoff offset /* = 0x0 */, bool bRelativeToCurrentPos /* = true */)
+HEXDLLEXPORT bool HEX::HEXReader::Read<bool>(size_t size /*= 1*/, const std::streamoff offset /* = 0x0 */, bool bRelativeToCurrentPos /* = true */)
 {
 	void* buffer = NULL;
 
-	buffer = ReadByteArray(sizeof(uint8_t) * size, offset, bRelativeToCurrentPos);
+	buffer = ReadByteArray(sizeof(int8_t), offset, bRelativeToCurrentPos);
 
 	assert(buffer != NULL);
 
-	uint8_t ret = *reinterpret_cast<uint8_t*>(buffer);
+	int8_t ret = *reinterpret_cast<int8_t*>(buffer);
 
 	delete[] buffer;
 	buffer = NULL;
@@ -161,6 +305,18 @@ HEXDLLEXPORT bool HEX::HEXReader::Read(size_t size /* = 1 */, const std::streamo
 	return (ret != 0);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads specified amount of bytes at specified position as std::string
+///
+/// 
+///
+/// @param size Amount of bytes to read.
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A std::string
+/// @wa the returned std::string will only contain useful data if the position points to an actual text.
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template <>
 HEXDLLEXPORT std::string HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
 {
@@ -178,6 +334,18 @@ HEXDLLEXPORT std::string HEX::HEXReader::Read(size_t size /*= 1*/, const std::st
 	return ret;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief template specialization - Reads specified amount of bytes at specified position as std::wstring
+///
+/// 
+///
+/// @param size Amount of bytes to read.
+/// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
+/// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return A std::wstring
+/// @wa the returned std::wstring will only contain useful data if the position points to an actual text.
+/// @sa Read()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template <>
 HEXDLLEXPORT std::wstring HEX::HEXReader::Read(size_t size /*= 1*/, const std::streamoff offset /*= 0x0*/, bool bRelativeToCurrentPos /*= true*/)
 {
