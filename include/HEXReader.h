@@ -49,6 +49,7 @@ namespace HEX
 		HEXDLLEXPORT	~HEXReader();
 
 		HEXDLLEXPORT	bool			Open(std::wstring strFileName);
+		HEXDLLEXPORT	bool			Open(std::string strFileName);
 		HEXDLLEXPORT	bool			IsValid(void);
 		HEXDLLEXPORT	std::streampos	GetFileSize(void);
 		HEXDLLEXPORT	void			Goto(const std::streamoff offset, bool bRelativeToCurrentPos = true);

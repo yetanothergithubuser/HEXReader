@@ -1,6 +1,6 @@
 #include "HEXReader.h"
 
-#include "vld.h"
+//#include "vld.h"
 
 
 HEXDLLEXPORT HEX::HEXReader::HEXReader()
@@ -30,6 +30,13 @@ HEXDLLEXPORT HEX::HEXReader::~HEXReader()
 /// @sa IsValid()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HEXDLLEXPORT bool HEX::HEXReader::Open(std::wstring strFileName)
+{
+	m_File.open(strFileName, std::ios::in | std::ios::binary);
+
+	return IsValid();
+}
+
+HEXDLLEXPORT bool HEX::HEXReader::Open(std::string strFileName)
 {
 	m_File.open(strFileName, std::ios::in | std::ios::binary);
 
