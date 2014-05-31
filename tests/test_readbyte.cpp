@@ -1,6 +1,6 @@
-#include <windows.h>
+//#include <windows.h>
 
-#include <string>
+//#include <string>
 
 #include "HEXReader.h"
 

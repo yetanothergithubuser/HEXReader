@@ -15,8 +15,8 @@
 #endif
 
 
-#include <Windows.h>
-#include <TlHelp32.h>
+//#include <Windows.h>
+//#include <TlHelp32.h>
 #include <stdint.h>
 #include <string>
 #include <iostream>
