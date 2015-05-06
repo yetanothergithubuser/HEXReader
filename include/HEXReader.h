@@ -52,15 +52,20 @@ namespace HEX
 		HEXDLLEXPORT	bool			Open(std::string strFileName);
 		HEXDLLEXPORT	bool			IsValid(void);
 		HEXDLLEXPORT	std::streampos	GetFileSize(void);
-		HEXDLLEXPORT	void			Goto(const std::streamoff offset, bool bRelativeToCurrentPos = true);
+		HEXDLLEXPORT	bool			Goto(const std::streamoff offset, bool bRelativeToCurrentPos = true);
+		HEXDLLEXPORT	std::streampos	GetPos(void);
 
 		template <typename T>
 		HEXDLLEXPORT	T				Read(size_t size = 1, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
 
 		HEXDLLEXPORT	void*			ReadByteArray(size_t size, const std::streamoff offset = 0x0, bool bRelativeToCurrentPos = true);
 
+		template <typename T>
+		HEXDLLEXPORT	bool			IsInsideBounds(void);
+
 	private:
 		std::ifstream	m_File;
+		std::streampos	m_fileSize;
 	};
 }
 

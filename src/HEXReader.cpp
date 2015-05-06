@@ -5,6 +5,23 @@
 
 HEXDLLEXPORT HEX::HEXReader::HEXReader()
 {
+	std::streampos begin = 0, end = 0, current = 0;
+
+	m_File.clear();
+
+	current = m_File.tellg();
+
+	m_File.seekg(0, std::ios::beg);
+	begin = m_File.tellg();
+
+	m_File.seekg(0, std::ios::end);
+	end = m_File.tellg();
+
+	m_File.seekg(current);
+
+	m_File.clear();
+
+	m_fileSize =  (end - begin);
 }
 
 
@@ -64,19 +81,23 @@ HEXDLLEXPORT bool HEX::HEXReader::IsValid(void)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HEXDLLEXPORT std::streampos HEX::HEXReader::GetFileSize(void)
 {
-	std::streampos begin = 0, end = 0, current = 0;
+	//std::streampos begin = 0, end = 0, current = 0;
 
-	current = m_File.tellg();
+	////m_File.clear();
 
-	m_File.seekg(0, std::ios::beg);
-	begin = m_File.tellg();
+	//current = m_File.tellg();
 
-	m_File.seekg(0, std::ios::end);
-	end = m_File.tellg();
+	//m_File.seekg(0, std::ios::beg);
+	//begin = m_File.tellg();
 
-	m_File.seekg(current);
+	//m_File.seekg(0, std::ios::end);
+	//end = m_File.tellg();
 
-	return (end - begin);
+	//m_File.seekg(current);
+
+	//return (end - begin);
+
+	return m_fileSize;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,13 +107,18 @@ HEXDLLEXPORT std::streampos HEX::HEXReader::GetFileSize(void)
 ///
 /// @param offset Offset from current Position (depends on bRelativeToCurrentPos)
 /// @param bRelativeToCurrentPos Determines how Offset is interpreted (relative from current Position, or absolute from beginning of File)
+/// @return returns true if no stream error flags are set
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HEXDLLEXPORT void HEX::HEXReader::Goto(const std::streamoff offset, bool bRelativeToCurrentPos /*= true*/)
+HEXDLLEXPORT bool HEX::HEXReader::Goto(const std::streamoff offset, bool bRelativeToCurrentPos /*= true*/)
 {
+	m_File.clear();
+
 	if (bRelativeToCurrentPos)
 		m_File.seekg(offset, std::ios::cur);
 	else
 		m_File.seekg(offset, std::ios::beg);
+
+	return m_File.good();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +138,8 @@ HEXDLLEXPORT void* HEX::HEXReader::ReadByteArray(size_t size, const std::streamo
 	buffer = new char[size]();
 	std::streampos current;
 
+	m_File.clear();
+
 	if (bRelativeToCurrentPos)
 	{
 		m_File.seekg(offset, std::ios::cur);	// sets filepointer position +/- offset from current position. moves not if 0. in either case filepointer size will be moved by size. look below
@@ -120,6 +148,8 @@ HEXDLLEXPORT void* HEX::HEXReader::ReadByteArray(size_t size, const std::streamo
 	{
 		m_File.seekg(offset, std::ios::beg);
 	}
+
+	assert(m_File.good() == true);
 
 	m_File.read(buffer, size);	// reads size amount at current filepointer position and also moves filepointer size amount forward.
 
@@ -369,3 +399,32 @@ HEXDLLEXPORT std::wstring HEX::HEXReader::Read(size_t size /*= 1*/, const std::s
 
 	return ret;
 }
+
+
+template <typename T>
+HEXDLLEXPORT	bool HEX::HEXReader::IsInsideBounds(void)
+{
+	//size_t sizeOfType;
+	std::streampos current = 0;
+
+
+	//problem here with bitstates since i added ifstream::clear() in GetFileSize (and GoTo)
+	m_File.clear();
+
+	current = m_File.tellg();
+
+	if ((current + std::streampos(sizeof(T))) > GetFileSize())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+template HEXDLLEXPORT	bool HEX::HEXReader::IsInsideBounds<uint32_t>(void);
+
+HEXDLLEXPORT	std::streampos HEX::HEXReader::GetPos(void)
+{
+	return m_File.tellg();
+}
+
